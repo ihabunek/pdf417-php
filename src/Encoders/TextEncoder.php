@@ -1,0 +1,262 @@
+<?php
+
+namespace Bezdomni\Barcode\Encoders;
+
+use Bezdomni\Barcode\EncoderInterface;
+
+/**
+ * Converts text to code words.
+ *
+ * Can encode: ASCII 9, 10, 13 and 32-126
+ * Rate: 2 characters per code word.
+ */
+class TextEncoder implements EncoderInterface
+{
+    // -- Submodes ------------------------------------------------------
+
+    /** Uppercase submode. */
+    const SUBMODE_UPPER = "SUBMODE_UPPER";
+
+    /** Lowercase submode. */
+    const SUBMODE_LOWER = "SUBMODE_LOWER";
+
+    /** mixed submode (numbers and some punctuation). */
+    const SUBMODE_MIXED = "SUBMODE_MIXED";
+
+    /** Punctuation submode. */
+    const SUBMODE_PUNCT = "SUBMODE_PUNCT";
+
+
+    // -- Submode switches ----------------------------------------------
+
+    /** Switch to uppercase submode. */
+    const SWITCH_UPPER = "SWITCH_UPPER";
+
+    /** Switch to uppercase submode for a single character. */
+    const SWITCH_UPPER_SINGLE = "SWITCH_UPPER_SINGLE";
+
+    /** Switch to lowercase submode. */
+    const SWITCH_LOWER = "SWITCH_LOWER";
+
+    /** Switch to mixed submode. */
+    const SWITCH_MIXED = "SWITCH_MIXED";
+
+    /** Switch to punctuation submode. */
+    const SWITCH_PUNCT = "SWITCH_PUNCT";
+
+    /** Switch to punctuation submode for a single character. */
+    const SWITCH_PUNCT_SINGLE = "SWITCH_PUNCT_SINGLE";
+
+    // ------------------------------------------------------------------
+
+    /** Character codes per submode. */
+    private $characterTables = [
+        self::SUBMODE_UPPER => [
+            "A", "B", "C", "D", "E", "F", "G", "H", "I",
+            "J", "K", "L", "M", "N", "O", "P", "Q", "R",
+            "S", "T", "U", "V", "W", "X", "Y", "Z", " ",
+            self::SWITCH_LOWER,
+            self::SWITCH_MIXED,
+            self::SWITCH_PUNCT_SINGLE
+        ],
+
+        self::SUBMODE_LOWER => [
+            "a", "b", "c", "d", "e", "f", "g", "h", "i",
+            "j", "k", "l", "m", "n", "o", "p", "q", "r",
+            "s", "t", "u", "v", "w", "x", "y", "z", " ",
+            self::SWITCH_UPPER_SINGLE,
+            self::SWITCH_MIXED,
+            self::SWITCH_PUNCT_SINGLE,
+        ],
+
+        self::SUBMODE_MIXED => [
+            "0", "1", "2", "3", "4", "5", "6", "7", "8",
+            "9", "&", "\r", "\t", ",", ":", "#", "-", ".",
+            "$", "/", "+", "%", "*", "=", "^",
+            self::SWITCH_PUNCT, " ",
+            self::SWITCH_LOWER,
+            self::SWITCH_UPPER,
+            self::SWITCH_PUNCT_SINGLE
+        ],
+
+        self::SUBMODE_PUNCT => [
+            ";", "<", ">", "@", "[", "\\", "]", "_", "`",
+            "~", "!", "\r", "\t", ",", ":", "\n", "-", ".",
+            "$", "/", "g", "|", "*", "(", ")", "?", "{", "}", "'",
+            self::SWITCH_UPPER,
+        ],
+    ];
+
+    /** Describe how to switch between submodes (can require two switches). */
+    private $switching = [
+        self::SUBMODE_UPPER => [
+            self::SUBMODE_LOWER => [self::SWITCH_LOWER],
+            self::SUBMODE_MIXED => [self::SWITCH_MIXED],
+            self::SUBMODE_PUNCT => [self::SWITCH_MIXED, self::SWITCH_PUNCT],
+        ],
+        self::SUBMODE_LOWER => [
+            self::SUBMODE_UPPER => [self::SWITCH_MIXED, self::SWITCH_UPPER],
+            self::SUBMODE_MIXED => [self::SWITCH_MIXED],
+            self::SUBMODE_PUNCT => [self::SWITCH_MIXED, self::SWITCH_PUNCT],
+        ],
+        self::SUBMODE_MIXED => [
+            self::SUBMODE_UPPER => [self::SWITCH_UPPER],
+            self::SUBMODE_LOWER => [self::SWITCH_LOWER],
+            self::SUBMODE_PUNCT => [self::SWITCH_PUNCT],
+        ],
+        self::SUBMODE_PUNCT => [
+            self::SUBMODE_UPPER => [self::SWITCH_UPPER],
+            self::SUBMODE_LOWER => [self::SWITCH_UPPER, self::SWITCH_LOWER],
+            self::SUBMODE_MIXED => [self::SWITCH_UPPER, self::SWITCH_MIXED],
+        ],
+    ];
+
+    /**
+     * Reverse lookup array. Indexed by $charater, then by $submode, gives the
+     * code (row) of the character in that submode.
+     */
+    private $reverseLookup;
+
+
+    public function __construct()
+    {
+        $this->populateReverseLookup();
+    }
+
+    public function canEncode($char)
+    {
+        return isset($this->reverseLookup[$char]);
+    }
+
+    public function encode($text)
+    {
+        $interim = $this->encode1($text);
+        return $this->encode2($interim);
+    }
+
+
+    /**
+     * Converts the given text to interim code from the character tables.
+     */
+    private function encode1($text)
+    {
+        $submode = self::SUBMODE_UPPER;
+
+        $codes = [];
+
+        $len = strlen($text);
+        for ($i=0; $i < $len; $i++) {
+            $char = substr($text, $i, 1);
+
+            if (!$this->existsInSubmode($char, $submode)) {
+                $prevSubmode = $submode;
+                $submode = $this->getSubmode($char);
+
+                $switchCodes = $this->getSwitchCodes($prevSubmode, $submode);
+                foreach($switchCodes as $sc) {
+                    $codes[] = $sc;
+                }
+            }
+
+            $codes[] = $this->getCharacterCode($char, $submode);
+        }
+
+        return $codes;
+    }
+
+
+    /**
+     * Converts the interim code to code words.
+     */
+    private function encode2($codes)
+    {
+        $codeWords = [];
+
+        // Two letters per CW
+        $chunks = array_chunk($codes, 2);
+
+        foreach ($chunks as $key => $chunk) {
+
+            // Add padding if single char in chunk
+            if (count($chunk) == 1) {
+                $chunk[] = 29; // TODO: remove magic 29
+            }
+
+            $codeWords[] = 30 * $chunk[0] + $chunk[1];
+            // var_dump($chunk, 30 * $chunk[0] + $chunk[1], '--');
+        }
+
+        return $codeWords;
+    }
+
+    // private function
+
+    /** Returns code for given character in given submode. */
+    private function getCharacterCode($char, $submode)
+    {
+        if (!isset($this->reverseLookup[$char])) {
+            $ord = ord($char);
+            throw new \Exception("Character [$char] (ASCII $ord) cannot be encoded.");
+        }
+
+        if (!isset($this->reverseLookup[$char][$submode])) {
+            $ord = ord($char);
+            throw new \Exception("Character [$char] (ASCII $ord) cannot be encoded in submode [$submode].");
+        }
+
+        return $this->reverseLookup[$char][$submode];
+    }
+
+    /**
+     * Builds `$this->lookup` based on data in `$this->characterTables`.
+     */
+    private function populateReverseLookup()
+    {
+        foreach ($this->characterTables as $submode => $codes) {
+            foreach ($codes as $row => $char) {
+                if (!isset($this->reverseLookup[$char])) {
+                    $this->reverseLookup[$char] = [];
+                }
+                $this->reverseLookup[$char][$submode] = $row;
+            }
+        }
+    }
+
+    /**
+     * Returns true if given character can be encoded in given submode.
+     */
+    private function existsInSubmode($char, $submode)
+    {
+        return isset($this->reverseLookup[$char][$submode]);
+    }
+
+    /**
+     * Returns an array of one or two code for switching between given submodes.
+     */
+    private function getSwitchCodes($from, $to)
+    {
+        if (!isset($this->switching[$from][$to])) {
+            throw new \Exception("Cannot find switching codes from [$from] to [$to].");
+        }
+
+        return $this->switching[$from][$to];
+    }
+
+    /**
+     * Returns a submode in which the given character can be encoded.
+     *
+     * If the character exists in multiple submodes, returns the first one, as
+     * ordered in $this->characterTables.
+     */
+    private function getSubmode($char)
+    {
+        if (!isset($this->reverseLookup[$char])) {
+            $ord = ord($char);
+            throw new \Exception("Cannot encode character [$char] (ASCII $ord).");
+        }
+
+        $source = $this->reverseLookup[$char];
+        reset($source);
+        return key($source);
+    }
+}
