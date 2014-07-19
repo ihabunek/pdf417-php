@@ -14,23 +14,20 @@ use Bezdomni\Barcode\Encoders\NumberEncoder;
  */
 class DataEncoder
 {
-    const START_CHARACTER = "11111111010101000";
-    const STOP_CHARACTER  = "11111110100010100";
+    private $encoders;
+    private $defaultEncoder;
 
-    public function __construct(array $encoders)
+    public function __construct()
     {
-        if (empty($encoders)) {
-            throw new \Exception("No encoders given");
-        }
+        // Encoders sorted in order of preference
+        $this->encoders = [
+            new Encoders\NumberEncoder(),
+            new Encoders\TextEncoder(),
+            new Encoders\ByteEncoder(),
+        ];
 
-        foreach ($encoders as $encoder) {
-            if (!($encoder instanceof EncoderInterface)) {
-                $class = get_class($encoder);
-                throw new \Exception("Given encoder [$class] does not implement EncoderInterface.");
-            }
-        }
-
-        $this->encoders = $encoders;
+        // Default mode is Text
+        $this->defaultEncoder = $this->encoders[1];
     }
 
     /**
@@ -48,37 +45,63 @@ class DataEncoder
      */
     public function encode($data)
     {
-        // Holds encoded data
+        $chains = $this->splitToChains($data);
+        $addSwitchCode = false;
+
         $codes = [];
+        foreach ($chains as $chEnc) {
+            list($chain, $encoder) = $chEnc;
 
-        $activeEncoder = reset($this->encoders);
+            $encoded = $encoder->encode($chain, $addSwitchCode);
+            foreach ($encoded as $code) {
+                $codes[] = $code;
+            }
 
-        // A chain of symbols which can be encoded with the active encoder
+            $addSwitchCode = true;
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Splits a string into chains (sub-strings) which can be encoded with the
+     * same encoder.
+     *
+     * TODO: Currently always switches to the best encoder, even if it's just
+     * for one character, consider a better algorithm.
+     *
+     * @param  string $data String to split into chains.
+     * @return array        An array of [$chain, $encoder] pairs.
+     */
+    private function splitToChains($data)
+    {
         $chain = "";
+        $chains = [];
+        $encoder = $this->defaultEncoder;
 
         $length = strlen($data);
         for ($i = 0; $i < $length; $i++) {
-
             $char = $data[$i];
+
             $newEncoder = $this->getEncoder($char);
+            if ($newEncoder !== $encoder) {
+                // Save & reset chain if not empty
+                if (!empty($chain)) {
+                    $chains[] = [$chain, $encoder];
+                    $chain = "";
+                }
 
-            if ($activeEncoder !== $newEncoder) {
-                // Encode current chain
-                $this->encodeChain($chain, $activeEncoder, $codes);
-
-                // Reset the chain, activate new encoder
-                $chain = "";
-                $activeEncoder = $newEncoder;
+                $encoder = $newEncoder;
             }
 
             $chain .= $char;
         }
 
         if (!empty($chain)) {
-            $this->encodeChain($chain, $activeEncoder, $codes);
+            $chains[] = [$chain, $encoder];
         }
 
-        return $codes;
+        return $chains;
     }
 
     public function getEncoder($char)

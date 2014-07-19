@@ -12,6 +12,11 @@ use Bezdomni\Barcode\EncoderInterface;
  */
 class TextEncoder implements EncoderInterface
 {
+    /**
+     * Code word used to switch to Text mode.
+     */
+    const SWITCH_CODE_WORD = 900;
+
     // -- Submodes ------------------------------------------------------
 
     /** Uppercase submode. */
@@ -135,10 +140,15 @@ class TextEncoder implements EncoderInterface
         return isset($this->reverseLookup[$char]);
     }
 
-    public function encode($text)
+    public function getSwitchCode($data)
+    {
+        return self::SWITCH_CODE_WORD;
+    }
+
+    public function encode($text, $addSwitchCode)
     {
         $interim = $this->encodeInterim($text);
-        return $this->encodeFinal($interim);
+        return $this->encodeFinal($interim, $addSwitchCode);
     }
 
     /**
@@ -178,9 +188,13 @@ class TextEncoder implements EncoderInterface
     /**
      * Converts the interim code to code words.
      */
-    private function encodeFinal($codes)
+    private function encodeFinal($codes, $addSwitchCode)
     {
         $codeWords = [];
+
+        if ($addSwitchCode) {
+            $codeWords[] = self::SWITCH_CODE_WORD;
+        }
 
         // Two letters per CW
         $chunks = array_chunk($codes, 2);

@@ -14,12 +14,28 @@ use Bezdomni\Barcode\EncoderInterface;
  */
 class ByteEncoder implements EncoderInterface
 {
+    /**
+     * Code word used to switch to Byte mode.
+     */
+    const SWITCH_CODE_WORD = 901;
+
+    /**
+     * Alternate code word used to switch to Byte mode; used when number of
+     * bytes to encode is divisible by 6.
+     */
+    const SWITCH_CODE_WORD_ALT = 924;
+
     public function canEncode($char)
     {
         return (is_string($char) && strlen($char) == 1);
     }
 
-    public function encode($bytes)
+    public function getSwitchCode($data)
+    {
+        return (strlen($data) % 6 === 0) ? self::SWITCH_CODE_WORD_ALT : self::SWITCH_CODE_WORD;
+    }
+
+    public function encode($bytes, $addSwitchCode)
     {
         if (!is_string($bytes)) {
             throw new \InvalidArgumentException("Given input is not a string.");
@@ -29,12 +45,11 @@ class ByteEncoder implements EncoderInterface
         $byteCount = strlen($bytes);
         $chunkCount = ceil($byteCount / 6);
 
-        // If the number of bytes is a multiple of 6, code word 924 is used to
-        // switch to byte mode, otherwise code word 901 is used for switching.
-        $switch = ($byteCount % 6 === 0) ? 924 : 901;
+        $codeWords = [];
 
-        // Start with the switch
-        $codeWords = [$switch];
+        if ($addSwitchCode) {
+            $codeWords[] = $this->getSwitchCode($bytes);
+        }
 
         // Encode in chunks of 6 bytes
         for ($i = 0; $i < $chunkCount; $i++) {

@@ -6,5 +6,5 @@ interface EncoderInterface
 {
     public function canEncode($char);
 
-    public function encode($string);
+    public function encode($string, $addSwitchCode);
 }

@@ -412,12 +412,18 @@ class Codes
         ]
     ];
 
-    public function getCode($table, $row)
+    public static function getCode($table, $word)
     {
-        if (!isset(self::$codes[$table][$code])) {
-            throw new \Exception("Invalid code [$table][$row].");
+        if (!isset(self::$codes[$table][$word])) {
+            throw new \Exception("Invalid code word [$table][$word].");
         }
 
-        return self::$codes[$table][$code];
+        return self::$codes[$table][$word];
+    }
+
+    public static function getCodeForRow($row, $word)
+    {
+        $table = $row % 3;
+        return self::getCode($table, $word);
     }
 }

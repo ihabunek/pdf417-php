@@ -12,9 +12,19 @@ use Bezdomni\Barcode\EncoderInterface;
  */
 class NumberEncoder implements EncoderInterface
 {
+    /**
+     * Code word used to switch to Numeric mode.
+     */
+    const SWITCH_CODE_WORD = 902;
+
     public function canEncode($char)
     {
         return preg_match('/^[0-9]$/', $char);
+    }
+
+    public function getSwitchCode($data)
+    {
+        return self::SWITCH_CODE_WORD;
     }
 
     /**
@@ -25,7 +35,7 @@ class NumberEncoder implements EncoderInterface
      *   removed by the decoding procedure)
      * - base is changed from 10 to 900
      */
-    public function encode($digits)
+    public function encode($digits, $addSwitchCode)
     {
         if (!preg_match('/^[0-9]+$/', $digits)) {
             throw new \InvalidArgumentException("Invalid input given.");
@@ -34,6 +44,12 @@ class NumberEncoder implements EncoderInterface
         // Count the number of 44 character chunks
         $digitCount = strlen($digits);
         $chunkCount = ceil($digitCount / 44);
+
+        $codeWords = [];
+
+        if ($addSwitchCode) {
+            $codeWords[] = self::SWITCH_CODE_WORD;
+        }
 
         // Encode in chunks of 44 digits
         for ($i = 0; $i < $chunkCount; $i++) {
