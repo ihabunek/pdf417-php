@@ -1,6 +1,6 @@
 <?php
 
-namespace Bezdomni\Barcode;
+namespace BigFish\PDF417;
 
 /**
  * Computes the Reed Solomon correction factors.

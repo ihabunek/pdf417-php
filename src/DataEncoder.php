@@ -1,10 +1,6 @@
 <?php
 
-namespace Bezdomni\Barcode;
-
-use Bezdomni\Barcode\Encoders\ByteEncoder;
-use Bezdomni\Barcode\Encoders\TextEncoder;
-use Bezdomni\Barcode\Encoders\NumberEncoder;
+namespace BigFish\PDF417;
 
 /**
  * Encodes data into PDF417 code words.

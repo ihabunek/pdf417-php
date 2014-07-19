@@ -1,8 +1,8 @@
 <?php
 
-namespace Bezdomni\Barcode\Encoders;
+namespace BigFish\PDF417\Encoders;
 
-use Bezdomni\Barcode\EncoderInterface;
+use BigFish\PDF417\EncoderInterface;
 
 /**
  * Converts text to code words.

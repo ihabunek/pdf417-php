@@ -1,10 +1,10 @@
 <?php
 
-namespace Bezdomni\Barcode;
+namespace BigFish\PDF417;
 
-use Bezdomni\Barcode\Encoders\ByteEncoder;
-use Bezdomni\Barcode\Encoders\TextEncoder;
-use Bezdomni\Barcode\Encoders\NumberEncoder;
+use BigFish\Barcode\Encoders\ByteEncoder;
+use BigFish\Barcode\Encoders\TextEncoder;
+use BigFish\Barcode\Encoders\NumberEncoder;
 
 /**
  * Constructs a PDF417 barcodes.
@@ -92,7 +92,14 @@ class PDF417
             $codes[] = $rowCodes;
         }
 
-        return $codes;
+        $data = new BarcodeData();
+        $data->codes = $codes;
+        $data->rows = $rows;
+        $data->columns = $columns;
+        $data->codeWords = $codeWords;
+        $data->securityLevel = $secLev;
+
+        return $data;
     }
 
     /** Encodes data to a grid of codewords for constructing the barcode. */
