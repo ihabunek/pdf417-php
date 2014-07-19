@@ -87,7 +87,7 @@ class TextEncoder implements EncoderInterface
         ],
     ];
 
-    /** Describe how to switch between submodes (can require two switches). */
+    /** Describes how to switch between submodes (can require two switches). */
     private $switching = [
         self::SUBMODE_UPPER => [
             self::SUBMODE_LOWER => [self::SWITCH_LOWER],
@@ -111,12 +111,19 @@ class TextEncoder implements EncoderInterface
         ],
     ];
 
+    /** Describes which switch changes to which submode. */
+    private $switchSubmode = [
+        self::SWITCH_UPPER => self::SUBMODE_UPPER,
+        self::SWITCH_LOWER => self::SUBMODE_LOWER,
+        self::SWITCH_PUNCT => self::SUBMODE_PUNCT,
+        self::SWITCH_MIXED => self::SUBMODE_MIXED,
+    ];
+
     /**
      * Reverse lookup array. Indexed by $charater, then by $submode, gives the
      * code (row) of the character in that submode.
      */
     private $reverseLookup;
-
 
     public function __construct()
     {
@@ -130,24 +137,28 @@ class TextEncoder implements EncoderInterface
 
     public function encode($text)
     {
-        $interim = $this->encode1($text);
-        return $this->encode2($interim);
+        $interim = $this->encodeInterim($text);
+        return $this->encodeFinal($interim);
     }
 
-
     /**
-     * Converts the given text to interim code from the character tables.
+     * Converts the given text to interim codes from the character tables.
      */
-    private function encode1($text)
+    private function encodeInterim($text)
     {
+        // The default sub-mode is uppercase
         $submode = self::SUBMODE_UPPER;
 
         $codes = [];
 
+        // Iterate byte-by-byte, non-ascii encoding will be encoded in bytes
+        // sub-mode.
         $len = strlen($text);
         for ($i=0; $i < $len; $i++) {
-            $char = substr($text, $i, 1);
+            $char = $text[$i];
 
+            // TODO: detect when to use _SINGLE switches for encoding just one
+            // character
             if (!$this->existsInSubmode($char, $submode)) {
                 $prevSubmode = $submode;
                 $submode = $this->getSubmode($char);
@@ -164,11 +175,10 @@ class TextEncoder implements EncoderInterface
         return $codes;
     }
 
-
     /**
      * Converts the interim code to code words.
      */
-    private function encode2($codes)
+    private function encodeFinal($codes)
     {
         $codeWords = [];
 
@@ -183,7 +193,6 @@ class TextEncoder implements EncoderInterface
             }
 
             $codeWords[] = 30 * $chunk[0] + $chunk[1];
-            // var_dump($chunk, 30 * $chunk[0] + $chunk[1], '--');
         }
 
         return $codeWords;
@@ -239,7 +248,15 @@ class TextEncoder implements EncoderInterface
             throw new \Exception("Cannot find switching codes from [$from] to [$to].");
         }
 
-        return $this->switching[$from][$to];
+        $switches = $this->switching[$from][$to];
+
+        $codes = [];
+        foreach($switches as $switch) {
+            $codes[] = $this->getCharacterCode($switch, $from);
+            $from = $this->switchSubmode[$switch];
+        }
+
+        return $codes;
     }
 
     /**

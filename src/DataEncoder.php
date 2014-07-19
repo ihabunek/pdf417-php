@@ -6,6 +6,12 @@ use Bezdomni\Barcode\Encoders\ByteEncoder;
 use Bezdomni\Barcode\Encoders\TextEncoder;
 use Bezdomni\Barcode\Encoders\NumberEncoder;
 
+/**
+ * Encodes data into PDF417 code words.
+ *
+ * This is the top level data encoder which assigns encoding to lower level
+ * (byte, number, text) encoders.
+ */
 class DataEncoder
 {
     const START_CHARACTER = "11111111010101000";
@@ -13,6 +19,17 @@ class DataEncoder
 
     public function __construct(array $encoders)
     {
+        if (empty($encoders)) {
+            throw new \Exception("No encoders given");
+        }
+
+        foreach ($encoders as $encoder) {
+            if (!($encoder instanceof EncoderInterface)) {
+                $class = get_class($encoder);
+                throw new \Exception("Given encoder [$class] does not implement EncoderInterface.");
+            }
+        }
+
         $this->encoders = $encoders;
     }
 
@@ -22,9 +39,12 @@ class DataEncoder
      * Splits the input data into chains which can be encoded within the same
      * encoder. Then encodes each chain.
      *
-     * This is not a algorithm method, it just switches to the best possible
-     * mode for each separate character. Should be replaced by a smarter
-     * algorithm.
+     * Uses a pretty dumb algorithm: switches to the best possible encoder for
+     * each separate character (the one that encodes it to the least bytes).
+     *
+     * TODO: create a better algorithm
+     *
+     * @param string $data The data to encode.
      */
     public function encode($data)
     {
@@ -55,10 +75,7 @@ class DataEncoder
         }
 
         if (!empty($chain)) {
-            $chainCodes = $activeEncoder->encode($chain);
-            foreach ($chainCodes as $code) {
-                $codes[] = $code;
-            }
+            $this->encodeChain($chain, $activeEncoder, $codes);
         }
 
         return $codes;
