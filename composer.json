@@ -1,5 +1,8 @@
 {
     "autoload": {
         "psr-4": {"Bezdomni\\Barcode\\": "src/"}
+    },
+    "require": {
+        "intervention/image": "*"
     }
 }
