@@ -1,5 +1,5 @@
-Phormium License
-================
+PDF417-PHP License
+==================
 
 Copyright (c) 2014 Ivan Habunek <ivan.habunek@gmail.com>
 
