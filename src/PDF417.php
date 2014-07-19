@@ -85,7 +85,7 @@ class PDF417
         $reedSolomon = new ReedSolomon();
 
         $dataWords = $encoder->encode($data);
-        $rsWords = $reedSolomon->compute($dataWords, 2);
+        $rsWords = $reedSolomon->compute($dataWords, $secLev);
         $padWords = $this->getPadding($dataWords, $rsWords, $columns);
 
         $codeWords = array_merge($rsWords, $padWords, $dataWords);
