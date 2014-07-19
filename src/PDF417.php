@@ -67,17 +67,19 @@ class PDF417
         $grid = array_chunk($codeWords, $columns);
         $rows = count($grid);
 
+        // Iterate over rows
         $codes = [];
         foreach ($grid as $rowNum => $row) {
             $rowCodes = [];
 
-            // Add starting delimiter
+            // Add starting code word
             $rowCodes[] = self::START_CHARACTER;
 
             // Add left-side code word
             $left = $this->getLeftCodeWord($rowNum, $rows, $columns, $secLev);
             $rowCodes[] = Codes::getCodeForRow($rowNum, $left);
 
+            // Add data code words
             foreach ($row as $word) {
                 $rowCodes[] = Codes::getCodeForRow($rowNum, $word);
             }
@@ -86,7 +88,7 @@ class PDF417
             $right = $this->getRightCodeWord($rowNum, $rows, $columns, $secLev);
             $rowCodes[] = Codes::getCodeForRow($rowNum, $right);
 
-            // Add ending delimiter
+            // Add ending code word
             $rowCodes[] = self::STOP_CHARACTER;
 
             $codes[] = $rowCodes;

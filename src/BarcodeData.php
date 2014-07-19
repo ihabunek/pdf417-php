@@ -12,4 +12,22 @@ class BarcodeData
     public $rows;
     public $codes;
     public $securityLevel;
+
+    public function getPixelGrid()
+    {
+        $pixelGrid = [];
+        foreach ($this->codes as $row) {
+            $pixelRow = [];
+            foreach ($row as $value) {
+                $bin = decbin($value);
+                $len = strlen($bin);
+                for ($i = 0; $i < $len; $i++) {
+                    $pixelRow[] = (boolean) $bin[$i];
+                }
+            }
+            $pixelGrid[] = $pixelRow;
+        }
+
+        return $pixelGrid;
+    }
 }
