@@ -12,7 +12,7 @@ use Bezdomni\Barcode\Encoders\NumberEncoder;
 class PDF417
 {
     const START_CHARACTER = 0x1fea8;
-    const STOP_CHARACTER  = 0x1fd14;
+    const STOP_CHARACTER  = 0x3fa29;
 
     const PADDING_CODE_WORD = 900;
 
@@ -25,11 +25,15 @@ class PDF417
     public function columns($columns)
     {
         $this->columns = $columns;
+
+        return $this;
     }
 
     public function securityLevel($securityLevel)
     {
         $this->securityLevel = $securityLevel;
+
+        return $this;
     }
 
     // -------------------------------------------------------------------------
