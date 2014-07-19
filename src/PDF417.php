@@ -11,6 +11,14 @@ use Bezdomni\Barcode\Encoders\NumberEncoder;
  */
 class PDF417
 {
+    const MIN_ROWS = 3;
+    const MAX_ROWS = 90;
+
+    const MIN_COLUMNS = 1;
+    const MAX_COLUMNS = 30;
+
+    const MAX_CODE_WORDS = 925;
+
     const START_CHARACTER = 0x1fea8;
     const STOP_CHARACTER  = 0x3fa29;
 
@@ -24,7 +32,18 @@ class PDF417
 
     public function columns($columns)
     {
-        $this->columns = $columns;
+        $min = self::MIN_COLUMNS;
+        $max = self::MAX_COLUMNS;
+
+        if (!is_numeric($columns)) {
+            throw new \InvalidArgumentException("Column count must be numeric. Given: $columns");
+        }
+
+        if ($columns < $min || $columns > $max) {
+            throw new \InvalidArgumentException("Column count must be between $min and $max. Given: $columns");
+        }
+
+        $this->columns = intval($columns);
 
         return $this;
     }
@@ -41,14 +60,15 @@ class PDF417
     public function encode($data)
     {
         $codeWords = $this->encodeData($data);
-
         $secLev = $this->securityLevel;
         $columns = $this->columns;
         $rows = count($codeWords) / $columns;
 
-        $codes = [];
+        // Arrange codewords into a rows and columns
+        $grid = array_chunk($codeWords, $columns);
 
-        foreach ($codeWords as $rowNum => $row) {
+        $codes = [];
+        foreach ($grid as $rowNum => $row) {
             $rowCodes = [];
 
             // Add starting delimiter
@@ -81,18 +101,29 @@ class PDF417
         $columns = $this->columns;
         $secLev = $this->securityLevel;
 
+        // Encode data to code words
         $encoder = new DataEncoder();
-        $reedSolomon = new ReedSolomon();
-
         $dataWords = $encoder->encode($data);
-        $rsWords = $reedSolomon->compute($dataWords, $secLev);
-        $padWords = $this->getPadding($dataWords, $rsWords, $columns);
 
-        $codeWords = array_merge($rsWords, $padWords, $dataWords);
+        // Number of code correction words
+        $ecCount = $secLev << 2;
+        $dataCount = count($dataWords);
 
-        // Arrange codewords into a rows and columns
-        $codeWords = array_reverse($codeWords);
-        return array_chunk($codeWords, $columns);
+        // Add padding if needed
+        $padWords = $this->getPadding($dataCount, $ecCount, $columns);
+        $padCount = count($padWords);
+
+        // Add length specifier as the first data code word
+        // Length includes the data CWs, padding CWs and the specifier itself
+        $length = $dataCount + $padCount + 1;
+        array_unshift($dataWords, $length);
+
+        // Compute error correction code words
+        $reedSolomon = new ReedSolomon();
+        $ecWords = $reedSolomon->compute($dataWords, $secLev);
+
+        // Combine the code words and return
+        return array_merge($dataWords, $padWords, $ecWords);
     }
 
     // -------------------------------------------------------------------------
@@ -100,49 +131,49 @@ class PDF417
     private function getLeftCodeWord($rowNum, $rows, $columns, $secLev)
     {
         // Table used to encode this row
-        $tableID = $rowNum % 3 + 1;
+        $tableID = $rowNum % 3;
 
         switch($tableID) {
-            case 1:
+            case 0:
                 $x = intval(($rows - 1) / 3);
                 break;
-            case 2:
+            case 1:
                 $x = $secLev * 3;
                 $x += ($rows - 1) % 3;
                 break;
-            case 3:
+            case 2:
                 $x = $columns - 1;
                 break;
         }
 
-        $retval = (int) ($rowNum / 3);
-        return $retval * 30 + $x;
+        return 30 * intval($rowNum / 3) + $x;
     }
 
     private function getRightCodeWord($rowNum, $rows, $columns, $secLev)
     {
-        $tableID = $rowNum % 3 + 1;
+        $tableID = $rowNum % 3;
 
         switch($tableID) {
-            case 1:
+            case 0:
                 $x = $columns - 1;
                 break;
-            case 2:
+            case 1:
                 $x = intval(($rows - 1) / 3);
                 break;
-            case 3:
+            case 2:
                 $x = $secLev * 3;
                 $x += ($rows - 1) % 3;
                 break;
         }
 
-        $retval = (int) ($rowNum / 3);
-        return $retval * 30 + $x;
+        return 30 * intval($rowNum / 3) + $x;
     }
 
-    private function getPadding($dataWords, $rsWords, $columns)
+    private function getPadding($dataCount, $ecCount, $columns)
     {
-        $totalCount = count($dataWords) + count($rsWords);
+        // Total number of data words and error correction words, additionally
+        // reserve 1 code word for the length descriptor
+        $totalCount = $dataCount + $ecCount + 1;
         $mod = $totalCount % $columns;
 
         if ($mod > 0) {

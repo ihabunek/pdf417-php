@@ -134,31 +134,32 @@ class ReedSolomon
      */
     public function compute(array $data, $level)
     {
-        // Number of data code words
-        $dataCount = count($data);
-
         // Number of correction code words
         $count = pow(2, $level + 1);
 
-        // Correction factors
+        // Correction factors for the given level
         $factors = $this->factors[$level];
 
         // Correction code words array, prepopulated with zeros
-        $cws = array_fill(0, $count, 0);
+        $ecWords = array_fill(0, $count, 0);
 
-        for ($i = 0; $i < $dataCount; $i++) {
+        // Index of the last correction code word
+        $last = $count - 1;
 
-            $temp = ($data[$i] + $cws[$count - 1]) % 929;
+        foreach ($data as $key => $value) {
+            $temp = ($value + $ecWords[$last]) % 929;
 
-            for ($j = $count - 1; $j >= 0; $j--) {
-                if ($j === 0) {
-                    $cws[$j] = (929 - ($temp * $factors[$j]) % 929) % 929;
-                } else {
-                    $cws[$j] = ($cws[$j - 1] + 929 - ($temp * $factors[$j]) % 929) % 929;
-                }
+            for ($i = $last; $i >= 0; $i -= 1) {
+                $add = isset($ecWords[$i - 1]) ? $ecWords[$i - 1] : 0;
+                $ecWords[$i] = ($add + 929 - ($temp * $factors[$i]) % 929) % 929;
             }
         }
 
-        return $cws;
+        foreach($ecWords as &$word) {
+            $word = 929 - $word;
+        }
+        unset($word);
+
+        return array_reverse($ecWords);
     }
 }
