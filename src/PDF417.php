@@ -62,10 +62,10 @@ class PDF417
         $codeWords = $this->encodeData($data);
         $secLev = $this->securityLevel;
         $columns = $this->columns;
-        $rows = count($codeWords) / $columns;
 
         // Arrange codewords into a rows and columns
         $grid = array_chunk($codeWords, $columns);
+        $rows = count($grid);
 
         $codes = [];
         foreach ($grid as $rowNum => $row) {
@@ -111,11 +111,11 @@ class PDF417
 
         // Add padding if needed
         $padWords = $this->getPadding($dataCount, $ecCount, $columns);
-        $padCount = count($padWords);
+        $dataWords = array_merge($dataWords, $padWords);
 
         // Add length specifier as the first data code word
         // Length includes the data CWs, padding CWs and the specifier itself
-        $length = $dataCount + $padCount + 1;
+        $length = count($dataWords) + 1;
         array_unshift($dataWords, $length);
 
         // Compute error correction code words
@@ -123,7 +123,7 @@ class PDF417
         $ecWords = $reedSolomon->compute($dataWords, $secLev);
 
         // Combine the code words and return
-        return array_merge($dataWords, $padWords, $ecWords);
+        return array_merge($dataWords, $ecWords);
     }
 
     // -------------------------------------------------------------------------
