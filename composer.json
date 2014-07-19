@@ -1,5 +1,5 @@
 {
-    "name": "bigfish/pdf417",
+    "name": "bigfish/pdf417-php",
     "description": "A library for generating PDF417 barcodes in PHP",
     "license": "MIT",
     "autoload": {
