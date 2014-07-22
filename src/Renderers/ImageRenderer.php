@@ -3,10 +3,11 @@
 namespace BigFish\PDF417\Renderers;
 
 use BigFish\PDF417\BarcodeData;
+use BigFish\PDF417\RendererInterface;
 
 use Intervention\Image\Image;
 
-class ImageRenderer
+class ImageRenderer implements RendererInterface
 {
     private $format = 'png';
 
