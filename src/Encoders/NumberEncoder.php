@@ -58,7 +58,7 @@ class NumberEncoder implements EncoderInterface
             $cws = $this->encodeChunk($chunk);
 
             // Avoid using array_merge
-            foreach($cws as $cw) {
+            foreach ($cws as $cw) {
                 $codeWords[] = $cw;
             }
         }

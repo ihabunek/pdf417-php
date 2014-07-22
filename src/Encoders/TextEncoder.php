@@ -174,7 +174,7 @@ class TextEncoder implements EncoderInterface
                 $submode = $this->getSubmode($char);
 
                 $switchCodes = $this->getSwitchCodes($prevSubmode, $submode);
-                foreach($switchCodes as $sc) {
+                foreach ($switchCodes as $sc) {
                     $codes[] = $sc;
                 }
             }
@@ -265,7 +265,7 @@ class TextEncoder implements EncoderInterface
         $switches = $this->switching[$from][$to];
 
         $codes = [];
-        foreach($switches as $switch) {
+        foreach ($switches as $switch) {
             $codes[] = $this->getCharacterCode($switch, $from);
             $from = $this->switchSubmode[$switch];
         }

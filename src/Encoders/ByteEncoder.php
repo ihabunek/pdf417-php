@@ -62,7 +62,7 @@ class ByteEncoder implements EncoderInterface
             }
 
             // Avoid using array_merge
-            foreach($cws as $cw) {
+            foreach ($cws as $cw) {
                 $codeWords[] = $cw;
             }
         }

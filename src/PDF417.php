@@ -2,10 +2,6 @@
 
 namespace BigFish\PDF417;
 
-use BigFish\Barcode\Encoders\ByteEncoder;
-use BigFish\Barcode\Encoders\TextEncoder;
-use BigFish\Barcode\Encoders\NumberEncoder;
-
 /**
  * Constructs a PDF417 barcodes.
  */
