@@ -111,7 +111,7 @@ class PDF417
         $dataWords = $encoder->encode($data);
 
         // Number of code correction words
-        $ecCount = $secLev << 2;
+        $ecCount = pow(2, $secLev + 1);
         $dataCount = count($dataWords);
 
         // Add padding if needed
