@@ -9,21 +9,43 @@ use Intervention\Image\Image;
 
 class ImageRenderer implements RendererInterface
 {
-    private $format = 'png';
+    /** Supported image formats and corresponding MIME types. */
+    private $formats = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'gif' => 'image/gif',
+    ];
 
-    private $scale = 3;
+    private $options = [
+        'format' => 'png',
+        'quality' => 90,
+        'scale' => 3,
+        'ratio' => 3,
+        'padding' => 20,
+        'color' => "#000",
+        'bgColor' => "#fff",
+    ];
 
-    private $ratio = 3;
+    public function __construct(array $options)
+    {
+        // Merge given options with defaults
+        foreach ($options as $key => $value) {
+            if (isset($this->options[$key])) {
+                $this->options[$key] = $value;
+            }
+        }
 
-    private $padding = 20;
-
-    private $bgColor = "#fff";
-
-    private $color = "#000";
+        // Validate options
+        $format = $this->options['format'];
+        if (!isset($this->formats[$format])) {
+            throw new \InvalidArgumentException("Invalid image format: \"$format\".");
+        }
+    }
 
     public function getContentType()
     {
-        return "image/" . $this->format;
+        $format = $this->options['format'];
+        return $this->formats[$format];
     }
 
     public function render(BarcodeData $data)
@@ -32,27 +54,29 @@ class ImageRenderer implements RendererInterface
         $height = count($pixelGrid);
         $width = count($pixelGrid[0]);
 
-        $img = Image::canvas($width, $height, $this->bgColor);
+        $options = $this->options;
+
+        $img = Image::canvas($width, $height, $options['bgColor']);
 
         // Render the barcode
         foreach ($pixelGrid as $y => $row) {
             foreach ($row as $x => $value) {
                 if ($value) {
-                    $img->pixel($this->color, $x, $y);
+                    $img->pixel($options['color'], $x, $y);
                 }
             }
         }
 
         // Apply scaling & aspect ratio
-        $width *= $this->scale;
-        $height *= $this->scale * $this->ratio;
+        $width *= $options['scale'];
+        $height *= $options['scale'] * $options['ratio'];
         $img->resize($width, $height);
 
         // Add padding
-        $width += 2 * $this->padding;
-        $height += 2 * $this->padding;
+        $width += 2 * $options['padding'];
+        $height += 2 * $options['padding'];
         $img->resizeCanvas($width, $height, 'center', false, '#fff');
 
-        return $img->encode($this->format);
+        return $img->encode($options['format']);
     }
 }

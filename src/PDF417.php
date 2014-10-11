@@ -53,6 +53,12 @@ class PDF417
 
     // -------------------------------------------------------------------------
 
+    /**
+     * Encodes the given data to barcode code words.
+     *
+     * @param  string $data
+     * @return BarcodeData
+     */
     public function encode($data)
     {
         $codeWords = $this->encodeData($data);
