@@ -1,0 +1,51 @@
+<?php
+
+namespace BigFish\PDF417\Tests\Renderers;
+
+use BigFish\PDF417\BarcodeData;
+use BigFish\PDF417\Renderers\SvgRenderer;
+
+class SvgRendererTest extends \PHPUnit_Framework_TestCase
+{
+    public function testContentType()
+    {
+        $renderer = new SvgRenderer();
+        $actual = $renderer->getContentType();
+        $expected = "image/svg+xml";
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testRender()
+    {
+        $data = new BarcodeData();
+        $data->codes = [[true, false],[false, true]];
+
+        $scale = 3;
+        $ratio = 5;
+
+        $renderer = new SvgRenderer([
+            'scale' => $scale,
+            'ratio' => $ratio,
+        ]);
+
+        $string = $renderer->render($data);
+
+        // Check it contains the correct doctype
+        $doctype = '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">';
+        $this->assertContains($doctype, $string);
+
+        // Check document structure
+        $xml = simplexml_load_string($string);
+        $this->assertObjectHasAttribute('description', $xml);
+        $this->assertObjectHasAttribute('g', $xml);
+
+        foreach($xml->g as $group) {
+            foreach($group->rect as $rect) {
+                $this->assertSame($scale * $ratio, (integer) $rect['height']);
+                $this->assertSame($scale, (integer) $rect['width']);
+                $this->assertGreaterThanOrEqual(0, (integer) $rect['x']);
+                $this->assertGreaterThanOrEqual(0, (integer) $rect['y']);
+            }
+        }
+    }
+}
