@@ -7,7 +7,15 @@
             "BigFish\\PDF417\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "BigFish\\PDF417\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "intervention/image": "~1.6"
+    },
+    "require-dev": {
+        "mockery/mockery": "@stable"
     }
 }
