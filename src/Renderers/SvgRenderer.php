@@ -14,8 +14,7 @@ class SvgRenderer implements RendererInterface
         'pretty' => true,
         'scale' => 3,
         'ratio' => 3,
-        'color' => "#000",
-        'bgColor' => "#fff",
+        'color' => "#000"
     ];
 
     public function __construct(array $options = [])
