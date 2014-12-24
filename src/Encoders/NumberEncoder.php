@@ -72,7 +72,7 @@ class NumberEncoder implements EncoderInterface
 
             // Avoid using array_merge
             foreach ($cws as $cw) {
-                $codeWords[] = (integer) $cw;
+                $codeWords[] = $cw;
             }
         }
 
@@ -88,7 +88,7 @@ class NumberEncoder implements EncoderInterface
             $cw = bcmod($chunk, 900);
             $chunk = bcdiv($chunk, 900, 0); // Integer division
 
-            array_unshift($cws, $cw);
+            array_unshift($cws, (integer) $cw);
         }
 
         return $cws;
