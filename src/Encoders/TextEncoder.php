@@ -166,6 +166,11 @@ class TextEncoder implements EncoderInterface
      */
     public function encode($text, $addSwitchCode)
     {
+        if (!is_string($text)) {
+            $type = gettype($text);
+            throw new \InvalidArgumentException("Expected first parameter to be a string, $type given.");
+        }
+
         $interim = $this->encodeInterim($text);
         return $this->encodeFinal($interim, $addSwitchCode);
     }
