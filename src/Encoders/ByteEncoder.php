@@ -38,7 +38,8 @@ class ByteEncoder implements EncoderInterface
     public function encode($bytes, $addSwitchCode)
     {
         if (!is_string($bytes)) {
-            throw new \InvalidArgumentException("Given input is not a string.");
+            $type = gettype($bytes);
+            throw new \InvalidArgumentException("Expected first parameter to be a string, $type given.");
         }
 
         // Count the number of 6 character chunks
