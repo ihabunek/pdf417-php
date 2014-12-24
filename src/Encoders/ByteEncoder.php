@@ -108,7 +108,7 @@ class ByteEncoder implements EncoderInterface
         $cws = [];
 
         for ($i = 0; $i < strlen($chunk); $i++) {
-            $cws[] = ord($chunk);
+            $cws[] = ord($chunk[$i]);
         }
 
         return $cws;
