@@ -72,6 +72,7 @@ class PDF417
         // Iterate over rows
         $codes = [];
         foreach ($grid as $rowNum => $row) {
+            $table = $row % 3;
             $rowCodes = [];
 
             // Add starting code word
@@ -79,16 +80,16 @@ class PDF417
 
             // Add left-side code word
             $left = $this->getLeftCodeWord($rowNum, $rows, $columns, $secLev);
-            $rowCodes[] = Codes::getCodeForRow($rowNum, $left);
+            $rowCodes[] = Codes::getCode($table, $left);
 
             // Add data code words
             foreach ($row as $word) {
-                $rowCodes[] = Codes::getCodeForRow($rowNum, $word);
+                $rowCodes[] = Codes::getCode($table, $word);
             }
 
             // Add right-side code word
             $right = $this->getRightCodeWord($rowNum, $rows, $columns, $secLev);
-            $rowCodes[] = Codes::getCodeForRow($rowNum, $right);
+            $rowCodes[] = Codes::getCode($table, $right);
 
             // Add ending code word
             $rowCodes[] = self::STOP_CHARACTER;

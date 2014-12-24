@@ -2,6 +2,10 @@
 
 namespace BigFish\PDF417;
 
+/**
+ * Converts high-level (base 929) code words into low-level code words (binary
+ * patterns for drawing the bar code).
+ */
 class Codes
 {
     private static $codes = [
@@ -412,6 +416,14 @@ class Codes
         ]
     ];
 
+    /**
+     * Returns a low-level code work corresponding to the given high-level code
+     * word in the given table.
+     *
+     * @param  integer $table The table to look in (0-2).
+     * @param  integer $word  The code word to encode (0-928).
+     * @return integer        The encoded code word.
+     */
     public static function getCode($table, $word)
     {
         if (!isset(self::$codes[$table][$word])) {
@@ -419,11 +431,5 @@ class Codes
         }
 
         return self::$codes[$table][$word];
-    }
-
-    public static function getCodeForRow($row, $word)
-    {
-        $table = $row % 3;
-        return self::getCode($table, $word);
     }
 }
