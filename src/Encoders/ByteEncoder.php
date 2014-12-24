@@ -91,7 +91,7 @@ class ByteEncoder implements EncoderInterface
             $cw = bcmod($sum, 900);
             $sum = bcdiv($sum, 900, 0); // Integer division
 
-            array_unshift($cws, $cw);
+            array_unshift($cws, (integer) $cw);
         }
 
         return $cws;
