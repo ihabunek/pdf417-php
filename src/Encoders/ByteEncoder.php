@@ -25,16 +25,26 @@ class ByteEncoder implements EncoderInterface
      */
     const SWITCH_CODE_WORD_ALT = 924;
 
+    /**
+     * {@inheritdoc}
+     */
     public function canEncode($char)
     {
-        return (is_string($char) && strlen($char) == 1);
+        // Can encode any character
+        return is_string($char) && strlen($char) === 1;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSwitchCode($data)
     {
         return (strlen($data) % 6 === 0) ? self::SWITCH_CODE_WORD_ALT : self::SWITCH_CODE_WORD;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function encode($bytes, $addSwitchCode)
     {
         if (!is_string($bytes)) {

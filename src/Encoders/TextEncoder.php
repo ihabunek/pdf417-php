@@ -135,16 +135,25 @@ class TextEncoder implements EncoderInterface
         $this->populateReverseLookup();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function canEncode($char)
     {
         return isset($this->reverseLookup[$char]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSwitchCode($data)
     {
         return self::SWITCH_CODE_WORD;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function encode($text, $addSwitchCode)
     {
         $interim = $this->encodeInterim($text);

@@ -17,17 +17,25 @@ class NumberEncoder implements EncoderInterface
      */
     const SWITCH_CODE_WORD = 902;
 
+    /**
+     * {@inheritdoc}
+     */
     public function canEncode($char)
     {
-        return preg_match('/^[0-9]$/', $char);
+        return is_string($char) && 1 === preg_match('/^[0-9]$/', $char);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSwitchCode($data)
     {
         return self::SWITCH_CODE_WORD;
     }
 
     /**
+     *  {@inheritdoc}
+     *
      * The "Numeric" mode is a conversion from base 10 to base 900.
      *
      * - numbers are taken in groups of 44 (or less)
