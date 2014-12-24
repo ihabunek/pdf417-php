@@ -20,6 +20,7 @@ require 'vendor/autoload.php';
 
 use BigFish\PDF417\PDF417;
 use BigFish\PDF417\Renderers\ImageRenderer;
+use BigFish\PDF417\Renderers\SvgRenderer;
 
 // Text to be encoded into the barcode
 $text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
