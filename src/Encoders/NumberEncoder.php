@@ -45,8 +45,13 @@ class NumberEncoder implements EncoderInterface
      */
     public function encode($digits, $addSwitchCode)
     {
+        if (!is_string($digits)) {
+            $type = gettype($digits);
+            throw new \InvalidArgumentException("Expected first parameter to be a string, $type given.");
+        }
+
         if (!preg_match('/^[0-9]+$/', $digits)) {
-            throw new \InvalidArgumentException("Invalid input given.");
+            throw new \InvalidArgumentException("First parameter contains non-numeric characters.");
         }
 
         // Count the number of 44 character chunks
