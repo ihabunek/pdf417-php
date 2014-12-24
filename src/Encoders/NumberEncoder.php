@@ -67,7 +67,7 @@ class NumberEncoder implements EncoderInterface
 
             // Avoid using array_merge
             foreach ($cws as $cw) {
-                $codeWords[] = $cw;
+                $codeWords[] = (integer) $cw;
             }
         }
 
