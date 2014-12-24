@@ -71,7 +71,7 @@ class PDF417Test extends \PHPUnit_Framework_TestCase
         $pdf = new PDF417();
         $barcodeData = $pdf->encode($data);
 
-        $this->assertInstanceOf(BarcodeData::class, $barcodeData);
+        $this->assertInstanceOf("BigFish\\PDF417\\BarcodeData", $barcodeData);
 
         $expectedCWs = [166, 227, 637, 601, 902, 130, 900, 865, 179, 823, 868,
             227, 328, 755, 897, 419, 902, 1, 624, 142, 113, 522, 200, 900, 865,
