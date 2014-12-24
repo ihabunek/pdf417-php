@@ -9,6 +9,10 @@ use BigFish\PDF417\EncoderInterface;
  *
  * Can encode: ASCII 9, 10, 13 and 32-126
  * Rate: 2 characters per code word.
+ *
+ * TODO: Currently doesn't support switching to a submode for just one
+ * character (see T_PUN, T_UPP in
+ * http://grandzebu.net/informatique/codbar-en/pdf417.htm).
  */
 class TextEncoder implements EncoderInterface
 {
@@ -16,6 +20,13 @@ class TextEncoder implements EncoderInterface
      * Code word used to switch to Text mode.
      */
     const SWITCH_CODE_WORD = 900;
+
+    /**
+     * Since each code word consists of 2 characters, a padding value is
+     * needed when encoding a single character. 29 is used as padding because
+     * it's a switch in all 4 submodes, and doesn't add any data.
+     */
+    const PADDING_VALUE = 29;
 
     // -- Submodes ------------------------------------------------------
 
@@ -30,7 +41,6 @@ class TextEncoder implements EncoderInterface
 
     /** Punctuation submode. */
     const SUBMODE_PUNCT = "SUBMODE_PUNCT";
-
 
     // -- Submode switches ----------------------------------------------
 
@@ -212,7 +222,7 @@ class TextEncoder implements EncoderInterface
 
             // Add padding if single char in chunk
             if (count($chunk) == 1) {
-                $chunk[] = 29; // TODO: remove magic 29
+                $chunk[] = self::PADDING_VALUE;
             }
 
             $codeWords[] = 30 * $chunk[0] + $chunk[1];
@@ -220,8 +230,6 @@ class TextEncoder implements EncoderInterface
 
         return $codeWords;
     }
-
-    // private function
 
     /** Returns code for given character in given submode. */
     private function getCharacterCode($char, $submode)
