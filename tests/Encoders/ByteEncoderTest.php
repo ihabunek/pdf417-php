@@ -24,9 +24,7 @@ class ByteEncoderTest extends \PHPUnit_Framework_TestCase
 
         // Cannot encode empty strings, non-strings and multi digit strings
         $this->assertFalse($be->canEncode(""));
-        $this->assertFalse($be->canEncode("aa"));
-        $this->assertFalse($be->canEncode([]));
-        $this->assertFalse($be->canEncode(new \stdClass()));
+        $this->assertFalse($be->canEncode("foo"));
     }
 
     public function testGetSwitchCode()
