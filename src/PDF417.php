@@ -72,7 +72,7 @@ class PDF417
         // Iterate over rows
         $codes = [];
         foreach ($grid as $rowNum => $row) {
-            $table = $row % 3;
+            $table = $rowNum % 3;
             $rowCodes = [];
 
             // Add starting code word
