@@ -7,12 +7,17 @@ namespace BigFish\PDF417;
  */
 class PDF417
 {
-    const MIN_ROWS = 3;
-    const MAX_ROWS = 90;
-
     const MIN_COLUMNS = 1;
     const MAX_COLUMNS = 30;
+    const DEFAULT_COLUMNS = 6;
 
+    const MIN_SECURITY_LEVEL = 0;
+    const MAX_SECURITY_LEVEL = 8;
+    const DEFAULT_SECURITY_LEVEL = 2;
+
+    // TODO: Check barcode respects rows/codeword limits.
+    const MIN_ROWS = 3;
+    const MAX_ROWS = 90;
     const MAX_CODE_WORDS = 925;
 
     const START_CHARACTER = 0x1fea8;
@@ -20,13 +25,48 @@ class PDF417
 
     const PADDING_CODE_WORD = 900;
 
-    // -- Builder methods and properties ---------------------------------------
 
-    private $columns = 6;
+    // -- Properties -----------------------------------------------------------
 
-    private $securityLevel = 2;
+    /**
+     * Number of data columns in the bar code.
+     *
+     * The total number of columns will be greater due to adding start, stop,
+     * left and right columns.
+     *
+     * Valid values are between 3 and 30, defaults to 6.
+     *
+     * @var integer
+     */
+    private $columns = self::DEFAULT_COLUMNS;
 
-    public function columns($columns)
+    /**
+     * The security level to use for Reed Solomon error correction.
+     *
+     * Valid values are between 0 and 8, defaults to 2.
+     *
+     * @var integer
+     */
+    private $securityLevel = self::DEFAULT_SECURITY_LEVEL;
+
+    // -- Accessors ------------------------------------------------------------
+
+    /**
+     * Returns the column count.
+     *
+     * @return integer
+     */
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    /**
+     * Sets the column count.
+     *
+     * @param integer $columns
+     */
+    public function setColumns($columns)
     {
         $min = self::MIN_COLUMNS;
         $max = self::MAX_COLUMNS;
@@ -40,21 +80,43 @@ class PDF417
         }
 
         $this->columns = intval($columns);
-
-        return $this;
     }
 
-    public function securityLevel($securityLevel)
+    /**
+     * Returns the security level.
+     *
+     * @return integer
+     */
+    public function getSecurityLevel()
     {
-        $this->securityLevel = $securityLevel;
+        return $this->securityLevel;
+    }
 
-        return $this;
+    /**
+     * Sets the security level.
+     *
+     * @param integer $securityLevel
+     */
+    public function setSecurityLevel($securityLevel)
+    {
+        $min = self::MIN_SECURITY_LEVEL;
+        $max = self::MAX_SECURITY_LEVEL;
+
+        if (!is_numeric($securityLevel)) {
+            throw new \InvalidArgumentException("Security level must be numeric. Given: $securityLevel");
+        }
+
+        if ($securityLevel < $min || $securityLevel > $max) {
+            throw new \InvalidArgumentException("Security level must be between $min and $max. Given: $securityLevel");
+        }
+
+        $this->securityLevel = intval($securityLevel);
     }
 
     // -------------------------------------------------------------------------
 
     /**
-     * Encodes the given data to barcode code words.
+     * Encodes the given data to low level code words.
      *
      * @param  string $data
      * @return BarcodeData
