@@ -103,7 +103,6 @@ class ImageRendererTest extends \PHPUnit_Framework_TestCase
 
 
         $png = $renderer->render($data);
-        file_put_contents('png.png', $png);
         $image = Image::make($png);
 
         // Expected dimensions
