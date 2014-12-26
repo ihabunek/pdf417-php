@@ -1,7 +1,7 @@
 PDF 417 barcode generator
 =========================
 
-[![Build Status](https://travis-ci.org/ihabunek/pdf417-php.svg?branch=master)](https://travis-ci.org/ihabunek/pdf417-php) [![Latest Stable Version](https://poser.pugx.org/bigfish/pdf417-php/v/stable.svg)](https://packagist.org/packages/bigfish/pdf417-php) [![Total Downloads](https://poser.pugx.org/bigfish/pdf417-php/downloads.svg)](https://packagist.org/packages/bigfish/pdf417-php) [![Latest Unstable Version](https://poser.pugx.org/bigfish/pdf417-php/v/unstable.svg)](https://packagist.org/packages/bigfish/pdf417-php) [![License](https://poser.pugx.org/bigfish/pdf417-php/license.svg)](https://packagist.org/packages/bigfish/pdf417-php)
+[![Build Status](https://travis-ci.org/ihabunek/pdf417-php.svg?branch=master)](https://travis-ci.org/ihabunek/pdf417-php) [![Latest Stable Version](https://poser.pugx.org/bigfish/pdf417/v/stable.svg)](https://packagist.org/packages/bigfish/pdf417) [![Total Downloads](https://poser.pugx.org/bigfish/pdf417/downloads.svg)](https://packagist.org/packages/bigfish/pdf417) [![Latest Unstable Version](https://poser.pugx.org/bigfish/pdf417/v/unstable.svg)](https://packagist.org/packages/bigfish/pdf417) [![License](https://poser.pugx.org/bigfish/pdf417/license.svg)](https://packagist.org/packages/bigfish/pdf417)
 
 Requirements
 ------------
