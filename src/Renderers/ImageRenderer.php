@@ -92,29 +92,36 @@ class ImageRenderer extends AbstractRenderer
         $height = count($pixelGrid);
         $width = count($pixelGrid[0]);
 
-        $options = $this->options;
+        // Extract options
+        $bgColor = $this->options['bgColor'];
+        $color = $this->options['color'];
+        $format = $this->options['format'];
+        $padding = $this->options['padding'];
+        $ratio = $this->options['ratio'];
+        $scale = $this->options['scale'];
 
-        $img = Image::canvas($width, $height, $options['bgColor']);
+        // Create a new image
+        $img = Image::canvas($width, $height, $bgColor);
 
         // Render the barcode
         foreach ($pixelGrid as $y => $row) {
             foreach ($row as $x => $value) {
                 if ($value) {
-                    $img->pixel($options['color'], $x, $y);
+                    $img->pixel($color, $x, $y);
                 }
             }
         }
 
         // Apply scaling & aspect ratio
-        $width *= $options['scale'];
-        $height *= $options['scale'] * $options['ratio'];
+        $width *= $scale;
+        $height *= $scale * $ratio;
         $img->resize($width, $height);
 
         // Add padding
-        $width += 2 * $options['padding'];
-        $height += 2 * $options['padding'];
+        $width += 2 * $padding;
+        $height += 2 * $padding;
         $img->resizeCanvas($width, $height, 'center', false, '#fff');
 
-        return $img->encode($options['format']);
+        return $img->encode($format);
     }
 }
