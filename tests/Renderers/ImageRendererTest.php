@@ -5,7 +5,7 @@ namespace BigFish\PDF417\Tests\Renderers;
 use BigFish\PDF417\BarcodeData;
 use BigFish\PDF417\Renderers\ImageRenderer;
 
-use Intervention\Image\Image;
+use Intervention\Image\ImageManager;
 
 class ImageRendererTest extends \PHPUnit_Framework_TestCase
 {
@@ -103,15 +103,17 @@ class ImageRendererTest extends \PHPUnit_Framework_TestCase
 
 
         $png = $renderer->render($data);
-        $image = Image::make($png);
+
+        $manager = new ImageManager();
+        $image = $manager->make($png);
 
         // Expected dimensions
         $width = 2 * $padding + 2 * $scale;
         $height = 2 * $padding + 2 * $scale * $ratio;
         $mime = "image/png";
 
-        $this->assertSame($width, $image->width);
-        $this->assertSame($height, $image->height);
+        $this->assertSame($width, $image->width());
+        $this->assertSame($height, $image->height());
         $this->assertSame($mime, $image->mime);
     }
 
@@ -130,12 +132,15 @@ class ImageRendererTest extends \PHPUnit_Framework_TestCase
         $data->codes = [[true, false],[false, true]];
 
         $png = $renderer->render($data);
-        $image = Image::make($png);
+
+        // Open the image
+        $manager = new ImageManager();
+        $image = $manager->make($png);
 
         // The whole image should have either forground or background color
         // Check no other colors appear in the image
-        for ($x = 0; $x < $image->width; $x++) {
-            for ($y = 0; $y < $image->height; $y++) {
+        for ($x = 0; $x < $image->width(); $x++) {
+            for ($y = 0; $y < $image->height(); $y++) {
                 $c = $image->pickColor($x, $y, 'hex');
                 $this->assertTrue(
                     in_array($c, [$color, $bgColor]),

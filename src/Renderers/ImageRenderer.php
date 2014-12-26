@@ -5,7 +5,8 @@ namespace BigFish\PDF417\Renderers;
 use BigFish\PDF417\BarcodeData;
 use BigFish\PDF417\RendererInterface;
 
-use Intervention\Image\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Gd\Color;
 
 class ImageRenderer extends AbstractRenderer
 {
@@ -22,8 +23,8 @@ class ImageRenderer extends AbstractRenderer
         'scale' => 3,
         'ratio' => 3,
         'padding' => 20,
-        'color' => "#000",
-        'bgColor' => "#fff",
+        'color' => "#000000",
+        'bgColor' => "#ffffff",
     ];
 
     /**
@@ -54,19 +55,20 @@ class ImageRenderer extends AbstractRenderer
             $errors[] = "Invalid option \"padding\": \"$padding\". Expected an integer between 0 and 50.";
         }
 
-        // Check colors
-        $image = new Image();
+        // Check colors by trying to parse them
         $color = $this->options['color'];
         $bgColor = $this->options['bgColor'];
 
+        $gdColor = new Color();
+
         try {
-            $image->parseColor($color);
+            $gdColor->parse($color);
         } catch (\Exception $ex) {
             $errors[] = "Invalid option \"color\": \"$color\". Supported color formats: \"#000000\", \"rgb(0,0,0)\", or \"rgba(0,0,0,0)\"";
         }
 
         try {
-            $image->parseColor($bgColor);
+            $gdColor->parse($bgColor);
         } catch (\Exception $ex) {
             $errors[] = "Invalid option \"bgColor\": \"$bgColor\". Supported color formats: \"#000000\", \"rgb(0,0,0)\", or \"rgba(0,0,0,0)\"";
         }
@@ -101,7 +103,8 @@ class ImageRenderer extends AbstractRenderer
         $scale = $this->options['scale'];
 
         // Create a new image
-        $img = Image::canvas($width, $height, $bgColor);
+        $manager = new ImageManager();
+        $img = $manager->canvas($width, $height, $bgColor);
 
         // Render the barcode
         foreach ($pixelGrid as $y => $row) {
