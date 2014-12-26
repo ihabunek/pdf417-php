@@ -120,7 +120,7 @@ class ImageRenderer extends AbstractRenderer
         // Add padding
         $width += 2 * $padding;
         $height += 2 * $padding;
-        $img->resizeCanvas($width, $height, 'center', false, '#fff');
+        $img->resizeCanvas($width, $height, 'center', false, $bgColor);
 
         return $img->encode($format);
     }

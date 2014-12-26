@@ -114,4 +114,34 @@ class ImageRendererTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($height, $image->height);
         $this->assertSame($mime, $image->mime);
     }
+
+
+    public function testColors()
+    {
+        $color = "#ff0000";
+        $bgColor = "#0000ff";
+
+        $renderer = new ImageRenderer([
+            'color' => $color,
+            'bgColor' => $bgColor,
+        ]);
+
+        $data = new BarcodeData();
+        $data->codes = [[true, false],[false, true]];
+
+        $png = $renderer->render($data);
+        $image = Image::make($png);
+
+        // The whole image should have either forground or background color
+        // Check no other colors appear in the image
+        for ($x = 0; $x < $image->width; $x++) {
+            for ($y = 0; $y < $image->height; $y++) {
+                $c = $image->pickColor($x, $y, 'hex');
+                $this->assertTrue(
+                    in_array($c, [$color, $bgColor]),
+                    "Unexpected color $c encountered. Expected only $color or $bgColor."
+                );
+            }
+        }
+    }
 }
