@@ -3,9 +3,8 @@
 namespace BigFish\PDF417\Renderers;
 
 use BigFish\PDF417\BarcodeData;
-use BigFish\PDF417\RendererInterface;
 
-class JsonRenderer implements RendererInterface
+class JsonRenderer extends AbstractRenderer
 {
     public function getContentType()
     {
@@ -27,8 +26,11 @@ class JsonRenderer implements RendererInterface
 
         $json = json_encode($return);
         if (json_last_error() !== JSON_ERROR_NONE) {
+            // This should never happen
+            // @codeCoverageIgnoreStart
             $msg = json_last_error_msg();
             throw new \Exception("Failed encoding JSON: $msg");
+            // @codeCoverageIgnoreEnd
         }
 
         return $json;

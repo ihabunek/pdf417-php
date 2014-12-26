@@ -7,16 +7,16 @@ use BigFish\PDF417\RendererInterface;
 
 use Intervention\Image\Image;
 
-class ImageRenderer implements RendererInterface
+class ImageRenderer extends AbstractRenderer
 {
     /** Supported image formats and corresponding MIME types. */
-    private $formats = [
+    protected $formats = [
         'jpg' => 'image/jpeg',
         'png' => 'image/png',
         'gif' => 'image/gif',
     ];
 
-    private $options = [
+    protected $options = [
         'format' => 'png',
         'quality' => 90,
         'scale' => 3,
@@ -26,28 +26,66 @@ class ImageRenderer implements RendererInterface
         'bgColor' => "#fff",
     ];
 
-    public function __construct(array $options)
+    /**
+     * {@inheritdoc}
+     */
+    public function validateOptions()
     {
-        // Merge given options with defaults
-        foreach ($options as $key => $value) {
-            if (isset($this->options[$key])) {
-                $this->options[$key] = $value;
-            }
-        }
+        $errors = [];
 
-        // Validate options
         $format = $this->options['format'];
         if (!isset($this->formats[$format])) {
-            throw new \InvalidArgumentException("Invalid image format: \"$format\".");
+            $formats = implode(", ", array_keys($this->formats));
+            $errors[] = "Invalid option \"format\": \"$format\". Expected one of: $formats.";
         }
+
+        $scale = $this->options['scale'];
+        if (!is_numeric($scale) || $scale < 1 || $scale > 20) {
+            $errors[] = "Invalid option \"scale\": \"$scale\". Expected an integer between 1 and 20.";
+        }
+
+        $ratio = $this->options['ratio'];
+        if (!is_numeric($ratio) || $ratio < 1 || $ratio > 10) {
+            $errors[] = "Invalid option \"ratio\": \"$ratio\". Expected an integer between 1 and 10.";
+        }
+
+        $padding = $this->options['padding'];
+        if (!is_numeric($padding) || $padding < 0 || $padding > 50) {
+            $errors[] = "Invalid option \"padding\": \"$padding\". Expected an integer between 0 and 50.";
+        }
+
+        // Check colors
+        $image = new Image();
+        $color = $this->options['color'];
+        $bgColor = $this->options['bgColor'];
+
+        try {
+            $image->parseColor($color);
+        } catch (\Exception $ex) {
+            $errors[] = "Invalid option \"color\": \"$color\". Supported color formats: \"#000000\", \"rgb(0,0,0)\", or \"rgba(0,0,0,0)\"";
+        }
+
+        try {
+            $image->parseColor($bgColor);
+        } catch (\Exception $ex) {
+            $errors[] = "Invalid option \"bgColor\": \"$bgColor\". Supported color formats: \"#000000\", \"rgb(0,0,0)\", or \"rgba(0,0,0,0)\"";
+        }
+
+        return $errors;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getContentType()
     {
         $format = $this->options['format'];
         return $this->formats[$format];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function render(BarcodeData $data)
     {
         $pixelGrid = $data->getPixelGrid();
