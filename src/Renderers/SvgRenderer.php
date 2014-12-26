@@ -3,35 +3,52 @@
 namespace BigFish\PDF417\Renderers;
 
 use BigFish\PDF417\BarcodeData;
-use BigFish\PDF417\RendererInterface;
 
 use DOMImplementation;
 use DOMElement;
 
-class SvgRenderer implements RendererInterface
+class SvgRenderer extends AbstractRenderer
 {
-    private $options = [
-        'pretty' => true,
+    /**
+     * {@inheritdoc}
+     */
+    protected $options = [
         'scale' => 3,
         'ratio' => 3,
         'color' => "#000"
     ];
 
-    public function __construct(array $options = [])
+    /**
+     * {@inheritdoc}
+     */
+    public function validateOptions()
     {
-        // Merge given options with defaults
-        foreach ($options as $key => $value) {
-            if (isset($this->options[$key])) {
-                $this->options[$key] = $value;
-            }
+        $errors = [];
+
+        $scale = $this->options['scale'];
+        if (!is_numeric($scale) || $scale < 1 || $scale > 20) {
+            $errors[] = "Invalid option \"scale\": \"$scale\". Expected an integer between 1 and 20.";
         }
+
+        $ratio = $this->options['ratio'];
+        if (!is_numeric($ratio) || $ratio < 1 || $ratio > 10) {
+            $errors[] = "Invalid option \"ratio\": \"$ratio\". Expected an integer between 1 and 10.";
+        }
+
+        return $errors;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getContentType()
     {
         return "image/svg+xml";
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function render(BarcodeData $data)
     {
         $pixelGrid = $data->getPixelGrid();

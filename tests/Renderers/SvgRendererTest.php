@@ -36,8 +36,8 @@ class SvgRendererTest extends \PHPUnit_Framework_TestCase
 
         // Check document structure
         $xml = simplexml_load_string($string);
-        $this->assertObjectHasAttribute('description', $xml);
-        $this->assertObjectHasAttribute('g', $xml);
+        $this->assertTrue(isset($xml->description));
+        $this->assertTrue(isset($xml->g));
 
         foreach($xml->g as $group) {
             foreach($group->rect as $rect) {
