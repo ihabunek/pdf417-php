@@ -1,8 +1,8 @@
 PDF417 Changelog
 ================
 
-0.1.1 (TBA)
------------
+0.1.1 (2014-12-26)
+------------------
 
 * Added validation of options in renderers.
 * Fixed a bug in ImageRenderer where padding was not in bgColor, but white.
