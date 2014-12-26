@@ -85,6 +85,15 @@ class ImageRendererTest extends \PHPUnit_Framework_TestCase
         new ImageRenderer(["bgColor" => "red"]);
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid option "quality": "101".
+     */
+    public function testInvalidQuality()
+    {
+        new ImageRenderer(["quality" => 101]);
+    }
+
     public function testRenderPNG()
     {
         $data = new BarcodeData();

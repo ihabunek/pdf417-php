@@ -55,6 +55,11 @@ class ImageRenderer extends AbstractRenderer
             $errors[] = "Invalid option \"padding\": \"$padding\". Expected an integer between 0 and 50.";
         }
 
+        $quality = $this->options['quality'];
+        if (!is_numeric($quality) || $quality < 0 || $quality > 100) {
+            $errors[] = "Invalid option \"quality\": \"$quality\". Expected an integer between 0 and 50.";
+        }
+
         // Check colors by trying to parse them
         $color = $this->options['color'];
         $bgColor = $this->options['bgColor'];
@@ -99,6 +104,7 @@ class ImageRenderer extends AbstractRenderer
         $color = $this->options['color'];
         $format = $this->options['format'];
         $padding = $this->options['padding'];
+        $quality = $this->options['quality'];
         $ratio = $this->options['ratio'];
         $scale = $this->options['scale'];
 
@@ -125,6 +131,6 @@ class ImageRenderer extends AbstractRenderer
         $height += 2 * $padding;
         $img->resizeCanvas($width, $height, 'center', false, $bgColor);
 
-        return $img->encode($format);
+        return $img->encode($format, $quality);
     }
 }
