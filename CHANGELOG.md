@@ -1,6 +1,11 @@
 PDF417 Changelog
 ================
 
+0.1.2 (2014-12-26)
+------------------
+
+* Fixed an edge case in calculating Reed Solomon factors
+
 0.1.1 (2014-12-26)
 ------------------
 
