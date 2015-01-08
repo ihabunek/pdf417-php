@@ -1,7 +1,11 @@
 PDF 417 barcode generator
 =========================
 
-[![Build Status](https://travis-ci.org/ihabunek/pdf417-php.svg?branch=master)](https://travis-ci.org/ihabunek/pdf417-php) [![Latest Stable Version](https://poser.pugx.org/bigfish/pdf417/v/stable.svg)](https://packagist.org/packages/bigfish/pdf417) [![Total Downloads](https://poser.pugx.org/bigfish/pdf417/downloads.svg)](https://packagist.org/packages/bigfish/pdf417) [![License](https://poser.pugx.org/bigfish/pdf417/license.svg)](https://packagist.org/packages/bigfish/pdf417)
+[![Build Status](https://img.shields.io/travis/ihabunek/pdf417-php.svg?style=flat-square)](https://travis-ci.org/ihabunek/pdf417-php)
+[![Latest Version](https://img.shields.io/packagist/v/bigfish/pdf417.svg?style=flat-square&label=stable)](https://packagist.org/packages/bigfish/pdf417)
+[![Total Downloads](https://img.shields.io/packagist/dt/bigfish/pdf417.svg?style=flat-square)](https://packagist.org/packages/bigfish/pdf417)
+[![License](https://img.shields.io/packagist/l/bigfish/pdf417.svg?style=flat-square)](https://packagist.org/packages/bigfish/pdf417)
+[![Author](https://img.shields.io/badge/author-%40ihabunek-blue.svg?style=flat-square)](https://twitter.com/ihabunek)
 
 Requirements
 ------------
