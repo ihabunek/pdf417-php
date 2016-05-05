@@ -15,6 +15,9 @@ class ImageRenderer extends AbstractRenderer
         'jpg' => 'image/jpeg',
         'png' => 'image/png',
         'gif' => 'image/gif',
+        'tif' => 'image/tiff',
+        'bmp' => 'image/bmp',
+        'data-url' => null,
     ];
 
     protected $options = [
@@ -35,7 +38,7 @@ class ImageRenderer extends AbstractRenderer
         $errors = [];
 
         $format = $this->options['format'];
-        if (!isset($this->formats[$format])) {
+        if (!array_key_exists($format, $this->formats)) {
             $formats = implode(", ", array_keys($this->formats));
             $errors[] = "Invalid option \"format\": \"$format\". Expected one of: $formats.";
         }
@@ -92,6 +95,8 @@ class ImageRenderer extends AbstractRenderer
 
     /**
      * {@inheritdoc}
+     *
+     * @return \Intervention\Image\Image
      */
     public function render(BarcodeData $data)
     {
