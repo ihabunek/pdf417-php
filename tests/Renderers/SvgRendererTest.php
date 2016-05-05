@@ -36,7 +36,7 @@ class SvgRendererTest extends \PHPUnit_Framework_TestCase
 
         // Check document structure
         $xml = simplexml_load_string($string);
-        $this->assertTrue(isset($xml->description));
+        $this->assertFalse(isset($xml->description));
         $this->assertTrue(isset($xml->g));
 
         foreach($xml->g as $group) {
@@ -47,5 +47,24 @@ class SvgRendererTest extends \PHPUnit_Framework_TestCase
                 $this->assertGreaterThanOrEqual(0, (integer) $rect['y']);
             }
         }
+    }
+
+    public function testRenderWithDescription()
+    {
+        $data = new BarcodeData();
+        $data->codes = [[true, false],[false, true]];
+
+        $desc = "today is a good day to generate barcodes";
+
+        $renderer = new SvgRenderer([
+            'description' => $desc
+        ]);
+
+        $string = $renderer->render($data);
+
+        // Check description exists
+        $xml = simplexml_load_string($string);
+        $this->assertTrue(isset($xml->description));
+        $this->assertSame($desc, strval($xml->description));
     }
 }
