@@ -42,7 +42,11 @@ class DataEncoder
     public function encode($data)
     {
         $chains = $this->splitToChains($data);
-        $addSwitchCode = false;
+
+        // Add a switch code at the beginning if the first encoder to be used
+        // is not the text encoder. Decoders by default start decoding as text.
+        $firstEncoder = $chains[0][1];
+        $addSwitchCode = (!($firstEncoder instanceof Encoders\TextEncoder));
 
         $codes = [];
         foreach ($chains as $chEnc) {
