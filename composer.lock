@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1f5caf5bea6dcc4412279a2abee87d04",
+    "hash": "c840ee5bf058c0eb73c8fcc069a26773",
+    "content-hash": "6f8c83da0fda6e0794c5aaa5115a5c12",
     "packages": [
         {
             "name": "intervention/image",
@@ -140,7 +141,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.4",
-        "ext-gd": "*"
+        "ext-gd": "*",
+        "ext-bcmath": "*"
     },
     "platform-dev": []
 }

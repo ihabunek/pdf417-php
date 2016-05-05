@@ -15,7 +15,7 @@ abstract class AbstractRenderer implements RendererInterface
         // Merge options with defaults, ignore options not specified in
         // defaults.
         foreach ($options as $key => $value) {
-            if (isset($this->options[$key])) {
+            if (array_key_exists($key, $this->options)) {
                 $this->options[$key] = $value;
             }
         }

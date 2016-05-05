@@ -1,6 +1,12 @@
 PDF417 Changelog
 ================
 
+0.2.0 (2016-05-05)
+------------------
+
+* Added support for new formats in ImageRenderer (tif, bmp, data-url) (#1)
+* Fixed bug when encoded text started with numbers or bytes (#2)
+
 0.1.2 (2014-12-26)
 ------------------
 

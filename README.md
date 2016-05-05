@@ -13,8 +13,7 @@ Requirements
 Requires the following components:
 
 * PHP >= 5.4
-* Fileinfo extension
-* GD extension
+* PHP extensions: bcmath, fileinfo, gd
 
 Installation
 ------------
@@ -22,7 +21,7 @@ Installation
 Add it to your `composer.json` file:
 
 ```
-composer require bigfish/pdf417 ~0.1
+composer require bigfish/pdf417 ^1.0.0
 ```
 
 Usage overview
@@ -57,6 +56,68 @@ $renderer = new SvgRenderer([
 ]);
 
 $svg = $renderer->render($data);
+```
+
+ImageRenderer
+-------------
+
+Renders the barcode to an image using [Intervention Image](http://image.intervention.io/)
+
+Render function returns an instance of `Intervention\Image\Image`.
+
+#### Options
+
+Option  | Default | Description
+------- | ------- | -----------
+format  | png     | Output format, one of: `jpg`, `png`, `gif`, `tif`, `bmp`, `data-url`
+quality | 90      | Jpeg encode quality (1-10)
+scale   | 3       | Scale of barcode elements (1-20)
+ratio   | 3       | Height to width ration of barcode elements (1-10)
+padding | 20      | Padding in pixels (0-50)
+color   | #000000 | Foreground color as a hex code
+bgColor | #ffffff | Background color as a hex code
+
+#### Examples
+
+```php
+$pdf417 = new PDF417();
+$data = $pdf417->encode("My hovercraft is full of eels");
+
+// Create a PNG image, red on green background, extra big
+$renderer = new ImageRenderer([
+    'format' => 'png',
+    'color' => '#FF0000',
+    'color' => '#00FF00',
+    'scale' => 10,
+]);
+
+$image = $renderer->render($data);
+$image->save('hovercraft.png');
+```
+
+The `data-url` format is not like the others, it returns a base64 encoded PNG
+image which can be used in an image `src` or in CSS. When you create an image
+using this format:
+
+```php
+$pdf417 = new PDF417();
+$data = $pdf417->encode('My nipples explode with delight');
+
+$renderer = new ImageRenderer([
+    'format' => 'data-url'
+]);
+$img = $renderer->render($data);
+```
+
+You can use it directly in your HTML or CSS code:
+
+```html
+<img src="<?= $img->encoded ?>" />
+```
+
+And this will be rendered as:
+```html
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA.... " />
 ```
 
 Thanks

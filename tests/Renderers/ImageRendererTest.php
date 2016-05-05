@@ -30,6 +30,21 @@ class ImageRendererTest extends \PHPUnit_Framework_TestCase
         $actual = $renderer->getContentType();
         $expected = "image/gif";
         $this->assertSame($expected, $actual);
+
+        $renderer = new ImageRenderer(["format" => "bmp"]);
+        $actual = $renderer->getContentType();
+        $expected = "image/bmp";
+        $this->assertSame($expected, $actual);
+
+        $renderer = new ImageRenderer(["format" => "tif"]);
+        $actual = $renderer->getContentType();
+        $expected = "image/tiff";
+        $this->assertSame($expected, $actual);
+
+        // data-url format does not have a mime type
+        $renderer = new ImageRenderer(["format" => "data-url"]);
+        $actual = $renderer->getContentType();
+        $this->assertNull($actual);
     }
 
     /**
