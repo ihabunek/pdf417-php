@@ -14,19 +14,23 @@ class DataEncoderTest extends \PHPUnit_Framework_TestCase
         $encoder = new DataEncoder();
 
         // When starting with text, the first code word does not need to be the switch
-        $cw1 = $encoder->encode("ABC123")[0];
-        $this->assertNotEquals($cw1, TextEncoder::SWITCH_CODE_WORD);
+        $result = $encoder->encode("ABC123");
+        $this->assertNotEquals($result[0], TextEncoder::SWITCH_CODE_WORD);
+        $this->assertEquals([1, 89, 902, 1, 223], $result);
 
         // When starting with numbers, we do need to switch
-        $cw1 = $encoder->encode("123ABC")[0];
-        $this->assertEquals($cw1, NumberEncoder::SWITCH_CODE_WORD);
+        $result = $encoder->encode("123ABC");
+        $this->assertEquals($result[0], NumberEncoder::SWITCH_CODE_WORD);
+        $this->assertEquals([902, 1, 223, 900, 1, 89], $result);
 
         // Also with bytes
-        $cw1 = $encoder->encode("\x0B")[0];
-        $this->assertEquals($cw1, ByteEncoder::SWITCH_CODE_WORD);
+        $result = $encoder->encode("\x0B");
+        $this->assertEquals($result[0], ByteEncoder::SWITCH_CODE_WORD);
+        $this->assertEquals([901, 11], $result);
 
         // Alternate bytes switch code when number of bytes is divisble by 6
-        $cw1 = $encoder->encode("\x0B\x0B\x0B\x0B\x0B\x0B")[0];
-        $this->assertEquals($cw1, ByteEncoder::SWITCH_CODE_WORD_ALT);
+        $result = $encoder->encode("\x0B\x0B\x0B\x0B\x0B\x0B");
+        $this->assertEquals($result[0], ByteEncoder::SWITCH_CODE_WORD_ALT);
+        $this->assertEquals([924, 18, 455, 694, 754, 291], $result);
     }
 }
