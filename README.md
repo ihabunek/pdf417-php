@@ -87,7 +87,7 @@ $data = $pdf417->encode("My hovercraft is full of eels");
 $renderer = new ImageRenderer([
     'format' => 'png',
     'color' => '#FF0000',
-    'color' => '#00FF00',
+    'bgColor' => '#00FF00',
     'scale' => 10,
 ]);
 
