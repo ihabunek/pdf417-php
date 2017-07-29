@@ -1,6 +1,12 @@
 PDF417 Changelog
 ================
 
+0.3.0 (2017-07-29)
+------------------
+
+* Fixed a bug in the character table where `g` would be decoded as `"` if
+  preceeded by punctuation (#8) thanks @wotan192
+
 0.2.0 (2016-05-05)
 ------------------
 
