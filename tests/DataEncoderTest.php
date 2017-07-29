@@ -6,8 +6,9 @@ use BigFish\PDF417\DataEncoder;
 use BigFish\PDF417\Encoders\TextEncoder;
 use BigFish\PDF417\Encoders\NumberEncoder;
 use BigFish\PDF417\Encoders\ByteEncoder;
+use PHPUnit\Framework\TestCase;
 
-class DataEncoderTest extends \PHPUnit_Framework_TestCase
+class DataEncoderTest extends TestCase
 {
     public function testStartingSwitchCodeWordIsAddedOnlyForText()
     {

@@ -3,11 +3,12 @@
 namespace BigFish\PDF417\Tests\Encoders;
 
 use BigFish\PDF417\Encoders\TextEncoder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group encoders
  */
-class TextEncoderTest extends \PHPUnit_Framework_TestCase
+class TextEncoderTest extends TestCase
 {
     public function testCanEncode()
     {
@@ -15,11 +16,6 @@ class TextEncoderTest extends \PHPUnit_Framework_TestCase
 
         for ($ord = ord(' '); $ord < ord('Z'); $ord++) {
             $chr = chr($ord);
-
-            // Skip unencodable characters
-            if ($chr == '"') {
-                continue;
-            }
 
             $this->assertTrue(
                 $te->canEncode($chr),
@@ -76,15 +72,5 @@ class TextEncoderTest extends \PHPUnit_Framework_TestCase
     {
         $te = new TextEncoder();
         $te->encode([], true);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage  Cannot encode character ["] (ASCII 34).
-     */
-    public function testInvalidCharacter()
-    {
-        $te = new TextEncoder();
-        $te->encode('"', true);
     }
 }

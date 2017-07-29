@@ -19,6 +19,7 @@
         "intervention/image": "~2.0"
     },
     "require-dev": {
-        "mockery/mockery": "@stable"
+        "mockery/mockery": "@stable",
+        "phpunit/phpunit": "^4|^5"
     }
 }
