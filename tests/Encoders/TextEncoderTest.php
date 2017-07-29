@@ -16,11 +16,6 @@ class TextEncoderTest extends \PHPUnit_Framework_TestCase
         for ($ord = ord(' '); $ord < ord('Z'); $ord++) {
             $chr = chr($ord);
 
-            // Skip unencodable characters
-            if ($chr == '"') {
-                continue;
-            }
-
             $this->assertTrue(
                 $te->canEncode($chr),
                 "Unable to encode: " . var_export($chr, true)
@@ -76,15 +71,5 @@ class TextEncoderTest extends \PHPUnit_Framework_TestCase
     {
         $te = new TextEncoder();
         $te->encode([], true);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage  Cannot encode character ["] (ASCII 34).
-     */
-    public function testInvalidCharacter()
-    {
-        $te = new TextEncoder();
-        $te->encode('"', true);
     }
 }
