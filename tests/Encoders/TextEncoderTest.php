@@ -3,11 +3,12 @@
 namespace BigFish\PDF417\Tests\Encoders;
 
 use BigFish\PDF417\Encoders\TextEncoder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group encoders
  */
-class TextEncoderTest extends \PHPUnit_Framework_TestCase
+class TextEncoderTest extends TestCase
 {
     public function testCanEncode()
     {

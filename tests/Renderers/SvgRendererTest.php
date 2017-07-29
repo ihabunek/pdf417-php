@@ -4,8 +4,9 @@ namespace BigFish\PDF417\Tests\Renderers;
 
 use BigFish\PDF417\BarcodeData;
 use BigFish\PDF417\Renderers\SvgRenderer;
+use PHPUnit\Framework\TestCase;
 
-class SvgRendererTest extends \PHPUnit_Framework_TestCase
+class SvgRendererTest extends TestCase
 {
     public function testContentType()
     {

@@ -4,10 +4,10 @@ namespace BigFish\PDF417\Tests\Renderers;
 
 use BigFish\PDF417\BarcodeData;
 use BigFish\PDF417\Renderers\ImageRenderer;
-
 use Intervention\Image\ImageManager;
+use PHPUnit\Framework\TestCase;
 
-class ImageRendererTest extends \PHPUnit_Framework_TestCase
+class ImageRendererTest extends TestCase
 {
     public function testContentType()
     {

@@ -4,8 +4,9 @@ namespace BigFish\PDF417\Tests;
 
 use BigFish\PDF417\PDF417;
 use BigFish\PDF417\BarcodeData;
+use PHPUnit\Framework\TestCase;
 
-class PDF417Test extends \PHPUnit_Framework_TestCase
+class PDF417Test extends TestCase
 {
     public function testDefaultsAndAccessors()
     {

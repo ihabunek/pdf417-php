@@ -3,8 +3,9 @@
 namespace BigFish\PDF417\Tests;
 
 use BigFish\PDF417\Codes;
+use PHPUnit\Framework\TestCase;
 
-class CodesTest extends \PHPUnit_Framework_TestCase
+class CodesTest extends TestCase
 {
     public function testGetCode()
     {

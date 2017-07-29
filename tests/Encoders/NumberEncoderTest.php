@@ -3,11 +3,12 @@
 namespace BigFish\PDF417\Tests\Encoders;
 
 use BigFish\PDF417\Encoders\NumberEncoder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @group encoders
  */
-class NumberEncoderTest extends \PHPUnit_Framework_TestCase
+class NumberEncoderTest extends TestCase
 {
     public function testCanEncode()
     {
@@ -33,7 +34,7 @@ class NumberEncoderTest extends \PHPUnit_Framework_TestCase
     public function testCanEncodeException()
     {
         $ne = new NumberEncoder();
-        $ne->canEncode([]);
+        $this->assertFalse($ne->canEncode([]));
     }
 
     public function testGetSwitchCode()

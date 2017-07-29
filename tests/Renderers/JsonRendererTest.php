@@ -4,8 +4,9 @@ namespace BigFish\PDF417\Tests\Renderers;
 
 use BigFish\PDF417\BarcodeData;
 use BigFish\PDF417\Renderers\JsonRenderer;
+use PHPUnit\Framework\TestCase;
 
-class JsonRendererTest extends \PHPUnit_Framework_TestCase
+class JsonRendererTest extends TestCase
 {
     public function testContentType()
     {

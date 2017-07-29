@@ -3,8 +3,9 @@
 namespace BigFish\PDF417\Tests;
 
 use BigFish\PDF417\ReedSolomon;
+use PHPUnit\Framework\TestCase;
 
-class ReedSolomonTest extends \PHPUnit_Framework_TestCase
+class ReedSolomonTest extends TestCase
 {
     /**
      * @dataProvider computeProvider
