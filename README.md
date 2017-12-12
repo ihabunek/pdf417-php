@@ -21,7 +21,7 @@ Installation
 Add it to your `composer.json` file:
 
 ```
-composer require bigfish/pdf417 ^1.0.0
+composer require bigfish/pdf417
 ```
 
 Usage overview
