@@ -12,8 +12,9 @@ class DataEncoder
 {
     private $encoders;
     private $defaultEncoder;
+    private $forceBinary;
 
-    public function __construct()
+    public function __construct($forceBinary = false)
     {
         // Encoders sorted in order of preference
         $this->encoders = [
@@ -24,6 +25,8 @@ class DataEncoder
 
         // Default mode is Text
         $this->defaultEncoder = $this->encoders[1];
+
+        $this->forceBinary = $forceBinary;
     }
 
     /**
@@ -106,6 +109,10 @@ class DataEncoder
 
     public function getEncoder($char)
     {
+        if ($this->forceBinary) {
+            return $this->encoders[2];
+        }
+
         foreach ($this->encoders as $encoder) {
             if ($encoder->canEncode($char)) {
                 return $encoder;

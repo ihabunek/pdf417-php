@@ -49,6 +49,15 @@ class PDF417
      */
     private $securityLevel = self::DEFAULT_SECURITY_LEVEL;
 
+    /**
+     * Can be used to force binary encoding. This may reduce size of the
+     * barcode if the data contains many encoder changes, such as when
+     * encoding a compressed file.
+     *
+     * @var boolean
+     */
+    private $forceBinaryEncoding = false;
+
     // -- Accessors ------------------------------------------------------------
 
     /**
@@ -111,6 +120,25 @@ class PDF417
         }
 
         $this->securityLevel = intval($securityLevel);
+    }
+
+    /**
+     * Returns whether the binary encoding is forced or not.
+     *
+     * @return integer
+     */
+    public function getForceBinary()
+    {
+        return $this->forceBinaryEncoding;
+    }
+    /**
+     * Force or not the binary encoding for the whole data.
+     *
+     * @param boolean $force
+     */
+    public function setForceBinary($force = true)
+    {
+        $this->forceBinaryEncoding = $force;
     }
 
     // -------------------------------------------------------------------------
@@ -176,7 +204,7 @@ class PDF417
         $secLev = $this->securityLevel;
 
         // Encode data to code words
-        $encoder = new DataEncoder();
+        $encoder = new DataEncoder($this->forceBinaryEncoding);
         $dataWords = $encoder->encode($data);
 
         // Number of code correction words
