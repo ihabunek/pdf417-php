@@ -76,6 +76,19 @@ class ByteEncoderTest extends TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testEncode3()
+    {
+        $be = new ByteEncoder();
+
+        $actual = $be->encode(base64_decode("UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="), true);
+        $expected = [901, 134, 501, 627, 198, 376, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        $this->assertSame($expected, $actual);
+
+        $actual = $be->encode(base64_decode("UEsFBgAAAAAAAAAAAAAAAAAAAAAAAA=="), false);
+        $expected = [134, 501, 627, 198, 376, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        $this->assertSame($expected, $actual);
+    }
+
     /**
      * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Expected first parameter to be a string, array given.
