@@ -122,7 +122,7 @@ class SvgRenderer extends AbstractRenderer
             "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"
         );
 
-        $doc = $impl->createDocument(null, null, $docType);
+        $doc = $impl->createDocument(null, '', $docType);
         $doc->formatOutput = true;
 
         return $doc;
