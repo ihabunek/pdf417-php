@@ -1,11 +1,19 @@
 PDF 417 barcode generator
 =========================
 
-[![Build Status](https://img.shields.io/travis/ihabunek/pdf417-php.svg?style=flat-square)](https://travis-ci.org/ihabunek/pdf417-php)
 [![Latest Version](https://img.shields.io/packagist/v/bigfish/pdf417.svg?style=flat-square&label=stable)](https://packagist.org/packages/bigfish/pdf417)
 [![Total Downloads](https://img.shields.io/packagist/dt/bigfish/pdf417.svg?style=flat-square)](https://packagist.org/packages/bigfish/pdf417)
 [![License](https://img.shields.io/packagist/l/bigfish/pdf417.svg?style=flat-square)](https://packagist.org/packages/bigfish/pdf417)
 [![Author](https://img.shields.io/badge/author-%40ihabunek-blue.svg?style=flat-square)](https://twitter.com/ihabunek)
+
+This project is no longer maintained
+------------------------------------
+
+I have moved on from PHP and this project will no longer be updated. If you wish to continue the legacy, please fork the project.
+
+For a maintaned Python implementation check out [ihabunek/pdf417-py](https://github.com/ihabunek/pdf417-py/).
+
+-- Ivan
 
 Requirements
 ------------
